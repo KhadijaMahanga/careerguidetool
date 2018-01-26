@@ -1,0 +1,41 @@
+<!-- base.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel=stylesheet type=text/css href="{% static 'css/bootstrap/bootstrap.min.css' %}">
+    <link rel=stylesheet type=text/css href="{% static 'css/style.css' %}">
+  </head>
+    <body>
+
+      <header>
+        <div class="navbar navbar-dark bg-dark">
+          <div class="d-flex justify-content-between">
+            <a href="/" class="navbar-brand">Career guide</a>
+          </div>
+        </div>
+      </header>
+      {% block body %}
+      {% endblock %}
+      <footer class="footer">
+      </footer>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+      <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+      <script src="{% static 'js/vendor/jquery.min.js'  %}"></script>
+      <script src="{% static 'js/vendor/popper.min.js'  %}"></script>
+      <script src="{% static 'js/bootstrap/bootstrap.min.js'  %}"></script>
+      <script src="{% static 'js/vendor/holder.min.js'  %}"></script>
+
+      <script>
+        Holder.addTheme('thumb', {
+          bg: '#55595c',
+          fg: '#eceeef',
+          text: 'Thumbnail'
+        });
+      </script>
+  </body>
+</html>
