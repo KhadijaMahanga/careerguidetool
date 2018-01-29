@@ -6,14 +6,45 @@
   <main role="main">
     <section class="jumbotron text-center city-info">
       <div class="container">
-        <h1 class="jumbotron-heading">I am a from , and I would like to be a </h1>
-        <p class="lead"> Dar-es-salaam</p>
-        <p>
+        <form action="/" method="post">
+          {% csrf_token %}
+          {{ form.non_field_errors }}
+
+          <p class="jumbotron-heading"> I am a {{ form.gender }} from {{ form.region }} and <br/> <br />I would like to be a {{ form.career }} </p>
+          <input type="submit" value="Submit" />
+        </form>
+        <!-- <p class="lead"> Dar-es-salaam</p> -->
           <!-- <a href="/stations" class="btn btn-primary">Find Other Stations</a> -->
           <!-- <a href="#" class="btn btn-secondary">Secondary action</a> -->
-        </p>
       </div>
     </section>
+    {% if schools %}
+      <section class=text-center>
+        <div class="container">
+          <h4>List of schools doing well in subjects aligning to your career</h4>
+          <table>
+            <tr>
+              <th>School Name</th>
+              <th>Region</th>
+              <th>Subject</th>
+              <th>Subject National Ranking</th>
+              <th>Subject Regional Ranking</th>
+              <th></th>
+            </tr>
+            {% for school in schools %}
+              <tr>
+                <td>{{ school.schoolname }}</td>
+                <td>{{ school.region }}</td>
+                <td>{{ school.subjectname }}</td>
+                <td>{{ school.subjectnatranking }}</td>
+                <td>{{ school.subjectregranking }}</td>
+                <td><a href="{% url 'school' %}">More</a></td>
+              </tr>
+            {% endfor %}
+        </table>
+      </div>
+      </section>
+    {% endif %}
   </main>
 
 {% endblock %}

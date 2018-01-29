@@ -19,10 +19,10 @@ body {
 
 .jumbotron-heading {
   font-weight: 300;
+  font-size: 18px;
 }
 
 .jumbotron .container {
-  max-width: 40rem;
 }
 
 .album {
@@ -30,6 +30,35 @@ body {
   padding-top: 3rem;
   padding-bottom: 3rem;
   background-color: #f7f7f7;
+}
+
+table {
+
+}
+
+th {
+    height: 50px;
+}
+tr {
+  height: 40px;
+}
+tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+th, td {
+  width: 15%;
+  text-transform: capitalize;
+}
+
+
+th:first-child,td:first-child {
+  width: 32%;
+  text-align:left;
+}
+
+th:last-child, td:last-child {
+  width: 8%;
 }
 
 .card {
