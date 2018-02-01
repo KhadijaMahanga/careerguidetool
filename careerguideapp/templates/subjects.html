@@ -2,14 +2,11 @@
 {% block title %} {{ pageTitle }}{% endblock %}
 {% block body %}
   <main role="main" class="container">
-    <section class="starter-template">
-          <p class="jumbotron-heading"> </p>
-    </section>
-    <h2>List of {{ schoolcode }} in Tanzania</h2>
-    <!-- <ul class="list-group">
+    <h2>List of {{ pageTitle }} in Tanzania</h2>
+    <ul class="list-group">
       {% for subject in subjects %}
         <li class="list-group-item disabled">{{ subject.subjectname }}</li>
       {% endfor %}
-    </ul> -->
+    </ul>
   </main>
 {% endblock %}

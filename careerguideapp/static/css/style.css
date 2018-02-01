@@ -1,9 +1,19 @@
 body {
   min-height: 75rem; /* Can be removed; just added for demo purposes */
+  padding-top: 5rem;
 }
 
 .navbar {
   margin-bottom: 0;
+}
+
+.navbar-brand {
+  font-size: 16px;
+}
+
+.starter-template {
+  padding: 3.5rem 1.5rem;
+  text-align: center;
 }
 
 .jumbotron {

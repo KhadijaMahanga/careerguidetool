@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 import os, json
 from .forms import InputForm
-from models import Acseeyear2017Subjectperformance, Acseeyear2016Subjectperformance
+from models import Acseeyear2017Subjectperformance, Acseeyear2016Subjectperformance, Cseeyear2016Subjectperformance
 # Create your views here.
 
 data = json.load(open(os.path.join(settings.BASE_DIR, 'careerguideapp','career.json')))
@@ -20,10 +20,15 @@ def index(request):
             career = form.cleaned_data['career']
             region = form.cleaned_data['region']
             gender = form.cleaned_data['gender']
+            edu_level = form.cleaned_data['education_level']
 
-            schools = get_schools(career, region, gender)
+            schools = get_schools(career, region, gender, edu_level)
+            if edu_level == '1':
+                school_level = "A levels"
+            else:
+                school_level = "O levels"
             # redirect to a new URL:
-            return render(request, 'index.html', {'form': form, 'schools': schools})
+            return render(request, 'index.html', {'form': form, 'schools': schools, 'school_level': school_level})
 
     # if a GET (or any other method) we'll create a blank form
     else:
@@ -31,17 +36,44 @@ def index(request):
         return render(request, 'index.html', {'form': form})
 
 def school(request, schoolcode):
-    return render (request, 'school.html')
+    performance2017 = Acseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
+    pageTitle = "School Detail"
+    school_name = performance2017[0].schoolname
+    school_region = performance2017[0].region
+    school_gpa = performance2017[0].gpa
+    return render (request, 'school.html', {'performance2017': performance2017, 'pageTitle': pageTitle})
 
 
-def get_schools(career, region, gender):
+def get_schools(career, region, gender, edu_level):
     schools = []
     subjects = data[career]
-    for subject in subjects:
-        if not region:
-            queryset = Acseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(subjectnatranking__in=["1","2","3","4","5","6"])
-            schools += list(queryset)
+    if not region:
+        if edu_level == '1':
+            for subject in subjects:
+                queryset = Acseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(subjectnatranking__in=["1","2","3","4","5","6"])
+                schools += list(queryset)
         else:
-            queryset = Acseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(region = region).filter(subjectregranking__in=["1","2","3"])
-            schools += list(queryset)
+            for subject in subjects:
+                queryset =  Cseeyear2016Subjectperformance.objects.filter(subjectname = subject).filter(subjectnatranking__in=["1","2","3","4","5","6"])
+                schools += list(queryset)
+    else:
+        if edu_level == '1':
+            for subject in subjects:
+                queryset = Acseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(region = region).filter(subjectregranking__in=["1","2","3"])
+                schools += list(queryset)
+        else:
+            for subject in subjects:
+                queryset = Cseeyear2016Subjectperformance.objects.filter(subjectname = subject).filter(region = region).filter(subjectregranking__in=["1","2","3"])
+                schools += list(queryset)
     return schools
+
+def alevel_subjects(request):
+    subjects = Acseeyear2017Subjectperformance.objects.order_by().values('subjectname').distinct()
+    pageTitle = "A-levels Subjects"
+    return render(request, 'subjects.html', {'subjects': subjects, 'pageTitle': pageTitle})
+
+
+def olevel_subjects(request):
+    subjects = Cseeyear2016Subjectperformance.objects.order_by().values('subjectname').distinct()
+    pageTitle = "O-levels Subjects"
+    return render(request, 'subjects.html', {'subjects': subjects, 'pageTitle': pageTitle})
