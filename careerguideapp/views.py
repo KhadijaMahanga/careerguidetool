@@ -36,12 +36,14 @@ def index(request):
         return render(request, 'index.html', {'form': form})
 
 def school(request, schoolcode):
-    performance2017 = Acseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
+    alevel_subjects = Acseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
+    olevel_subjects = Cseeyear2016Subjectperformance.objects.filter(schoolcode = schoolcode)
     pageTitle = "School Detail"
-    school_name = performance2017[0].schoolname
-    school_region = performance2017[0].region
-    school_gpa = performance2017[0].gpa
-    return render (request, 'school.html', {'performance2017': performance2017, 'pageTitle': pageTitle})
+    school_name = alevel_subjects[0].schoolname
+    school_region = alevel_subjects[0].region
+    school_gpa = alevel_subjects[0].gpa
+    return render (request, 'school.html', {'olevel_subjects': olevel_subjects, 'alevel_subjects': alevel_subjects, 'pageTitle': pageTitle,
+'school_name': school_name, 'school_region': school_region, 'school_gpa': school_gpa})
 
 
 def get_schools(career, region, gender, edu_level):

@@ -1,15 +1,69 @@
 {% extends "_base.html" %}
 {% block title %} {{ pageTitle }}{% endblock %}
 {% block body %}
-  <main role="main" class="container">
+  <main role="main">
     <section class="starter-template">
-          <p class="jumbotron-heading"> </p>
+        <h1>{{ school_name }}</h1>
+        <h2> Region: {{ school_region }} </h2>
     </section>
-    <h2>List of {{ schoolcode }} in Tanzania</h2>
-    <!-- <ul class="list-group">
-      {% for subject in subjects %}
-        <li class="list-group-item disabled">{{ subject.subjectname }}</li>
-      {% endfor %}
-    </ul> -->
+    <section class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div style="padding: 5 30px">
+            <input id="tab1" type="radio" name="tabs" checked>
+            <label for="tab1">O-level Performance</label>
+
+            <input id="tab2" type="radio" name="tabs">
+            <label for="tab2">A-level Performance</label>
+
+            <input id="tab3" type="radio" name="tabs">
+            <label for="tab3">Performance Trend</label>
+
+            <section class="tabSection" id="content1">
+              <p>Subjects GPA</p>
+              <div class="col-md-8">
+              <ul class="list-group">
+              {% for subject in olevel_subjects %}
+                <li class="list-group-item">{{ subject.subjectname }}</li>
+                <div id="bar{{ forloop.counter }}" class="barfiller">
+                  <div class="tipWrap">
+              		<span class="tip"></span>
+              	    </div>
+                  <span class="fill" data-percentage={{ subject.subjectgpa }}></span>
+                </div>
+              {% endfor %}
+              </ul>
+            </div>
+            </section>
+            <section class="tabSection" id="content2">
+              <h4>A level Performance</h4>
+              <div>
+              <ul class="list-group">
+                {% for subject in alevel_subjects %}
+                  <li class="list-group-item disabled">{{ subject.subjectname }}</li>
+                  <div></div>
+                {% endfor %}
+                </ul>
+              </div>
+            </section>
+            <section class="tabSection" id="content3">
+
+            </section>
+          </div>
+        </div>
+      </div>
+    <section>
   </main>
+  <script type="text/javascript">
+  $(document).ready(function(){
+    var count = {{ olevel_subjects.count }}
+    for (var i= 1; i <= count; i++) {
+      elemId = '#bar'+i
+      $(elemId).barfiller({ barColor: 'orange' });
+    }
+
+
+  });
+
+  </script>
 {% endblock %}

@@ -34,7 +34,50 @@ body {
 
 .jumbotron .container {
 }
+.barfiller {
+  width: 100%;
+  height: 10px;
+  background: #fcfcfc;
+  margin-top: -10px;
+  box-shadow: inset 1px 4px 9px -6px rgba(0,0,0,.5);
+  -moz-box-shadow: inset 1px 4px 9px -6px rgba(0,0,0,.5);
+}
 
+.barfiller .fill {
+  display: block;
+  position: relative;
+  width: 0px;
+  height: 100%;
+  background: #333;
+  z-index: 1;
+}
+.barfiller .tipWrap { display: none; }
+
+.barfiller .tip {
+  margin-top: -30px;
+  padding: 2px 4px;
+  font-size: 11px;
+  color: #fff;
+  left: 0px;
+  position: absolute;
+  z-index: 2;
+  background: #333;
+}
+.list-group-item {
+  padding: 1.25rem;
+}
+
+.barfiller .tip:after {
+  border: solid;
+  border-color: rgba(0,0,0,.8) transparent;
+  border-width: 6px 6px 0 6px;
+  content: "";
+  display: block;
+  position: absolute;
+  left: 9px;
+  top: 100%;
+  z-index: 9
+}
 .album {
   min-height: 50rem; /* Can be removed; just added for demo purposes */
   padding-top: 3rem;
@@ -71,20 +114,68 @@ th:last-child, td:last-child {
   width: 8%;
 }
 
-.card {
-  float: left;
-  width: 33.333%;
-  padding: .75rem;
-  margin-bottom: 2rem;
-  border: 0;
+.tabSection {
+  display: none;
+  padding: 20px 0 0;
+  border-top: 1px solid #ddd;
+  font-family: Circular-Medium,sans-serif;
 }
 
-.card > img {
-  margin-bottom: .75rem;
+input {
+  display: none;
 }
 
-.card-text {
-  font-size: 85%;
+label {
+  display: inline-block;
+  margin: 0 0 -1px;
+  padding: 10px 20px;
+  font-weight: 400;
+  font-size: 18px;
+  text-align: center;
+  color: #bbb;
+  font-family: Circular-Medium,sans-serif;
+  border: 1px solid transparent;
+}
+
+label:before {
+  font-family: fontawesome;
+  font-weight: normal;
+  margin-right: 10px;
+}
+
+/*label[for*='1']:before {
+  content: '\f2c7';
+}
+
+label[for*='2']:before {
+  content: '\f17d';
+}
+
+label[for*='3']:before {
+  content: '\f16b';
+}
+
+label[for*='4']:before {
+  content: '\f1a9';
+}*/
+
+label:hover {
+  color: #888;
+  cursor: pointer;
+}
+
+input:checked + label {
+  color: #555;
+  border: 1px solid #ddd;
+  border-top: 2px solid orange;
+  border-bottom: 1px solid #fff;
+}
+
+#tab1:checked ~ #content1,
+#tab2:checked ~ #content2,
+#tab3:checked ~ #content3,
+#tab4:checked ~ #content4 {
+  display: block;
 }
 
 footer {
