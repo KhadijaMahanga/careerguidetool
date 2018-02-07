@@ -10,30 +10,43 @@
       <div class="row">
         <div class="col-md-12">
           <div style="padding: 5 30px">
-            <input id="tab1" type="radio" name="tabs" checked>
+            <input class="radio" id="tab1" type="radio" name="tabs" checked>
             <label for="tab1">O-level Performance</label>
 
-            <input id="tab2" type="radio" name="tabs">
+            <input class="radio" id="tab2" type="radio" name="tabs">
             <label for="tab2">A-level Performance</label>
 
-            <input id="tab3" type="radio" name="tabs">
+            <input class="radio" id="tab3" type="radio" name="tabs">
             <label for="tab3">Performance Trend</label>
 
             <section class="tabSection" id="content1">
-              <p>Subjects GPA</p>
-              <div class="col-md-8">
-              <ul class="list-group">
-              {% for subject in olevel_subjects %}
-                <li class="list-group-item">{{ subject.subjectname }}</li>
-                <div id="bar{{ forloop.counter }}" class="barfiller">
-                  <div class="tipWrap">
-              		<span class="tip"></span>
-              	    </div>
-                  <span class="fill" data-percentage={{ subject.subjectgpa }}></span>
+              <div class="col-md-12 col-lg-12 col-xs-12">
+                <div id="chartContainer" style="width: 100%; height: 300px"></div>
+              </div>
+              <hr />
+              <div class="row">
+                <div class="col-lg-8 col-md-8 col-xs-12">
+                  <p class="text-center">Subjects GPA</p>
+                  <ul class="list-group">
+                  {% for subject in OlevelSchooldetailsList %}
+                    <li class="list-group-item" id="subject{{ forloop.counter0 }}" data-position={{ forloop.counter0 }}>{{ subject.subjectname }}
+                    <div id="bar{{ forloop.counter }}" class="barfiller">
+                      <div class="tipWrap">
+                  		<span class="tip"></span>
+                  	    </div>
+                      <span class="fill" data-percentage={{ subject.subjectgpa }}></span>
+                    </div>
+                    </li>
+                  {% endfor %}
+                  </ul>
                 </div>
-              {% endfor %}
-              </ul>
-            </div>
+                <div class="col-lg-4 col-md-4 col-xs-12">
+                  <div id="subjectPerformance" class = "subjectPerformance">
+                  <p class="text-center">Subject Performance</p>
+                    <div id="subjectChartContainer" style="width: 100%; height: 300px"></div>
+                  </div>
+                </div>
+              </div>
             </section>
             <section class="tabSection" id="content2">
               <h4>A level Performance</h4>
@@ -56,14 +69,101 @@
   </main>
   <script type="text/javascript">
   $(document).ready(function(){
-    var count = {{ olevel_subjects.count }}
+    var count = {{ OlevelSchooldetailsList|length }}
     for (var i= 1; i <= count; i++) {
       elemId = '#bar'+i
       $(elemId).barfiller({ barColor: 'orange' });
+    };
+
+    for (var i= 0; i < count; i++) {
+      elemId = '#subject'+i;
+
+      $(elemId).click(function(){
+          var subjectPos = $(this).attr('data-position');
+          var subjectsPerformance = {{ OlevelSchooldetailsList | safe }};
+          var subject = subjectsPerformance[subjectPos];
+          var countA = 0;
+          var countB = 0;
+          var countC = 0;
+          var countD = 0;
+          var countE = 0;
+          var countF = 0;
+          var countABS = 0;
+          var len = subject.subjectPerformance.length;
+          for (var i = 0; i < len; i++) {
+            if (subject.subjectPerformance[i] == 'A') {
+              countA++;
+            } else if ( subject.subjectPerformance[i] == 'B') {
+              countB++;
+            } else if ( subject.subjectPerformance[i] == 'C') {
+              countC++;
+            } else if ( subject.subjectPerformance[i] == 'D') {
+              countD++;
+            } else if ( subject.subjectPerformance[i] == 'E') {
+              countE++;
+            } else if ( subject.subjectPerformance[i] == 'F') {
+              countF++;
+            } else {
+              countABS++
+            }
+          }
+          var perc = (100/len).toFixed(2);
+          var texts = subject.subjectname + " GRADE DISTRIBUTION 2016";
+
+          $("#subjectChartContainer").CanvasJSChart({
+            title: {
+              text: texts,
+              fontSize: 18
+            },
+            axisY: {
+              title: "Products in %"
+            },
+            data: [
+            {
+              type: "pie",
+              showInLegend: true,
+              toolTipContent: "{label} <br/> {y} %",
+              indexLabel: "{y} %",
+              dataPoints: [
+                { label: "A", y: countA * perc, legendText: "A"},
+                { label: "B", y: countB * perc, legendText: "B"  },
+                { label: "C", y: countC * perc, legendText: "C" },
+                { label: "D", y: countD * perc,  legendText: "D"},
+                { label: "E", y: countE * perc,  legendText: "E" },
+                { label: "F", y: countF * perc,  legendText: "F" },
+              ]
+            }
+            ]
+        });
+      });
     }
 
-
+    var total = {{ OlevelOverallPerformance.division_i }} + {{ OlevelOverallPerformance.division_ii }} + {{ OlevelOverallPerformance.division_iii }} + {{ OlevelOverallPerformance.division_iv }} + {{ OlevelOverallPerformance.division_0 }}
+    var perc = (100/total).toFixed(2)
+    $("#chartContainer").CanvasJSChart({
+		title: {
+			text: "Overall School Performance 2016",
+			fontSize: 18
+		},
+		axisY: {
+			title: "Products in %"
+		},
+		data: [
+		{
+			type: "pie",
+			showInLegend: true,
+			toolTipContent: "{label} <br/> {y} %",
+			indexLabel: "{y} %",
+			dataPoints: [
+				{ label: "Division I",  y: {{ OlevelOverallPerformance.division_i }} * perc, legendText: "Division I"},
+				{ label: "Division II", y: {{ OlevelOverallPerformance.division_ii }} * perc, legendText: "Division II"  },
+				{ label: "Division III",y: {{ OlevelOverallPerformance.division_iii }} * perc,  legendText: "Division III" },
+				{ label: "Division IV", y: {{ OlevelOverallPerformance.division_iv }} * perc,  legendText: "Division IV"},
+				{ label: "Division 0",  y: {{ OlevelOverallPerformance.division_0 }} * perc,  legendText: "Division 0" },
+			]
+		}
+		]
+	});
   });
-
   </script>
 {% endblock %}

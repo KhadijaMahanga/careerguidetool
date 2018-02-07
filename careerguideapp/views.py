@@ -4,10 +4,11 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 import os, json
 from .forms import InputForm
-from models import Acseeyear2017Subjectperformance, Acseeyear2016Subjectperformance, Cseeyear2016Subjectperformance
+from models import Acseeyear2017Subjectperformance, Cseeyear2016, Acseeyear2016Subjectperformance, Cseeyear2016Subjectperformance, Cseeyear2016Overallperformance
 # Create your views here.
 
 data = json.load(open(os.path.join(settings.BASE_DIR, 'careerguideapp','career.json')))
+olsubjects = json.load(open(os.path.join(settings.BASE_DIR, 'careerguideapp','olsubjects.json')))
 
 def index(request):
     # if this is a POST request we need to process the form data
@@ -32,6 +33,11 @@ def index(request):
 
     # if a GET (or any other method) we'll create a blank form
     else:
+        3
+        #queryset1 = Acseeyear2017Subjectperformance.objects.filter(subjectname = "Chemistry").filter()
+        #queryset2 = Acseeyear2017Subjectperformance.objects.filter(subjectname = "Biology").filter
+        #stories = queryset1 | queryset2
+        #print stories.distinct().order_by('schoolcode')
         form = InputForm(label_suffix="  ")
         return render(request, 'index.html', {'form': form})
 
@@ -42,8 +48,19 @@ def school(request, schoolcode):
     school_name = alevel_subjects[0].schoolname
     school_region = alevel_subjects[0].region
     school_gpa = alevel_subjects[0].gpa
-    return render (request, 'school.html', {'olevel_subjects': olevel_subjects, 'alevel_subjects': alevel_subjects, 'pageTitle': pageTitle,
-'school_name': school_name, 'school_region': school_region, 'school_gpa': school_gpa})
+    SchoolPerformance = Cseeyear2016.objects.filter(schoolcode = schoolcode)
+    OlevelSchooldetailsList = []
+    for obj in olevel_subjects:
+        subjectdetail = {}
+        subjectdetail["subjectname"] = obj.subjectname.encode("utf8")
+        subjectdetail["subjectgpa"] = obj.subjectgpa.encode("utf8")
+        subjectCol = str(olsubjects[obj.subjectname])
+        subjectdetail["subjectPerformance"] =  list(definition.encode("utf8") for definition in SchoolPerformance.values_list(subjectCol, flat=True))
+        OlevelSchooldetailsList.append(subjectdetail)
+
+    OlevelOverallPerformance = Cseeyear2016Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')[0]
+    return render (request, 'school.html', {'OlevelSchooldetailsList': OlevelSchooldetailsList, 'alevel_subjects': alevel_subjects, 'pageTitle': pageTitle,
+'school_name': school_name, 'school_region': school_region, 'school_gpa': school_gpa, 'OlevelOverallPerformance': OlevelOverallPerformance, 'SchoolPerformance': SchoolPerformance})
 
 
 def get_schools(career, region, gender, edu_level):
