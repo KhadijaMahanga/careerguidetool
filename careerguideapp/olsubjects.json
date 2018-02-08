@@ -9,8 +9,9 @@
   "BASIC MATHEMATICS": "basicmathematics",
   "ADDITIONAL MATHEMATICS": "additionalmathematics",
   "BIOLOGY": "biology",
-  "BOOK KEEPING": "bookkeeping",
+  "BOOK-KEEPING": "bookkeeping",
   "COMMERCE": "commerce",
-  "GEOGRAPHY": "geography"
+  "GEOGRAPHY": "geography",
+  "ELIMU YA DINI YA KIISLAMU": "elimuyadinikiislam"
 
 }

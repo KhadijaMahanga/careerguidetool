@@ -31,7 +31,7 @@
         var barWidth = object.width();
         var fill = object.find('.fill');
         var toolTip = object.find('.tip');
-        var fillPercentage = fill.attr('data-percentage');
+        var fillPercentage = parseFloat(fill.attr('data-percentage')).toFixed(2);
         var resizeTimeout;
         var transitionSupport = false;
         var transitionPrefix;
