@@ -3,6 +3,8 @@ from django.views.generic import TemplateView
 from django.http import HttpResponse, HttpResponseRedirect
 from django.conf import settings
 import os, json
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
 from .forms import InputForm
 from models import Acseeyear2017Subjectperformance, Acseeyear2017Overallperformance, Cseeyear2016, Acseeyear2017, Acseeyear2016Subjectperformance, Cseeyear2016Subjectperformance, Cseeyear2016Overallperformance
 # Create your views here.
@@ -46,19 +48,21 @@ def school(request, schoolcode):
     alevel_subjects = Acseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
     olevel_subjects = Cseeyear2016Subjectperformance.objects.filter(schoolcode = schoolcode)
     pageTitle = "School Detail"
-    school_name = school_region = school_gpa = OlevelOverallPerformance = AlevelOverallPerformance = None
+    school_name = school_region = school_gpa = OlevelOverallPerformance = AlevelOverallPerformance = {}
 
     if olevel_subjects:
         school_name = olevel_subjects[0].schoolname
         school_region = olevel_subjects[0].region
         school_gpa = olevel_subjects[0].gpa
-        OlevelOverallPerformance = Cseeyear2016Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')[0]
+        OlevelOverallPerformance = Cseeyear2016Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
+        OlevelOverallPerformance = serializers.serialize("json", OlevelOverallPerformance)
+
     if alevel_subjects:
         school_name = alevel_subjects[0].schoolname
         school_region = alevel_subjects[0].region
         school_gpa = alevel_subjects[0].gpa
-        AlevelOverallPerformance = Acseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')[0]
-
+        AlevelOverallPerformance = Acseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
+        AlevelOverallPerformance = serializers.serialize("json", AlevelOverallPerformance)
 
     SchoolPerformance = Cseeyear2016.objects.filter(schoolcode = schoolcode)
     ASchoolPerformance = Acseeyear2017.objects.filter(schoolcode = schoolcode)
