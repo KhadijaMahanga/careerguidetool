@@ -6,7 +6,7 @@ import os, json
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from .forms import InputForm
-from models import Acseeyear2017Subjectperformance, Acseeyear2017Overallperformance, Cseeyear2016, Acseeyear2017, Acseeyear2016Subjectperformance, Cseeyear2016Subjectperformance, Cseeyear2016Overallperformance
+from models import Acseeyear2017Subjectperformance, Acseeyear2017Overallperformance, Cseeyear2017, Cseeyear2016, Acseeyear2017, Acseeyear2016Subjectperformance, Cseeyear2015Subjectperformance, Cseeyear2016Subjectperformance, Cseeyear2017Subjectperformance, Cseeyear2017Overallperformance
 # Create your views here.
 
 data = json.load(open(os.path.join(settings.BASE_DIR, 'careerguideapp','career.json')))
@@ -46,16 +46,29 @@ def index(request):
 
 def school(request, schoolcode):
     alevel_subjects = Acseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
-    olevel_subjects = Cseeyear2016Subjectperformance.objects.filter(schoolcode = schoolcode)
+    alevel_subjects16 = Acseeyear2016Subjectperformance.objects.filter(schoolcode = schoolcode)
+    olevel_subjects = Cseeyear2017Subjectperformance.objects.filter(schoolcode = schoolcode)
+    olevel_subjects16 = Cseeyear2016Subjectperformance.objects.filter(schoolcode = schoolcode)
+    olevel_subjects15 = Cseeyear2015Subjectperformance.objects.filter(schoolcode = schoolcode)
     pageTitle = "School Detail"
     school_name = school_region = school_gpa = OlevelOverallPerformance = AlevelOverallPerformance = {}
+    AlevelPerformanceTrends = [];
+    OlevelPerformanceTrends = [];
+
+    if olevel_subjects15:
+        OlevelPerformanceTrends.append({"2015": olevel_subjects15[0].gpa})
+    if olevel_subjects16:
+        OlevelPerformanceTrends.append({"2016": olevel_subjects16[0].gpa})
+    if alevel_subjects16:
+        AlevelPerformanceTrends.append({"2016": alevel_subjects16[0].gpa})
 
     if olevel_subjects:
         school_name = olevel_subjects[0].schoolname
         school_region = olevel_subjects[0].region
         school_gpa = olevel_subjects[0].gpa
-        OlevelOverallPerformance = Cseeyear2016Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
+        OlevelOverallPerformance = Cseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
         OlevelOverallPerformance = serializers.serialize("json", OlevelOverallPerformance)
+        OlevelPerformanceTrends.append({"2017": olevel_subjects[0].gpa})
 
     if alevel_subjects:
         school_name = alevel_subjects[0].schoolname
@@ -63,11 +76,13 @@ def school(request, schoolcode):
         school_gpa = alevel_subjects[0].gpa
         AlevelOverallPerformance = Acseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
         AlevelOverallPerformance = serializers.serialize("json", AlevelOverallPerformance)
+        AlevelPerformanceTrends.append({"2017": alevel_subjects[0].gpa})
 
-    SchoolPerformance = Cseeyear2016.objects.filter(schoolcode = schoolcode)
+    SchoolPerformance = Cseeyear2017.objects.filter(schoolcode = schoolcode)
     ASchoolPerformance = Acseeyear2017.objects.filter(schoolcode = schoolcode)
     OlevelSchooldetailsList = []
     AlevelSchooldetailsList = []
+
     for obj in olevel_subjects:
         subjectdetail = {}
         subjectdetail["subjectname"] = obj.subjectname.encode("utf8")
@@ -102,7 +117,7 @@ def get_schools(career, region, gender, edu_level):
                 schools += list(queryset)
         else:
             for subject in subjects:
-                queryset =  Cseeyear2016Subjectperformance.objects.filter(subjectname = subject).filter(subjectnatranking__in=["1","2","3","4","5","6"])
+                queryset =  Cseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(subjectnatranking__in=["1","2","3","4","5","6"])
                 schools += list(queryset)
     else:
         if edu_level == '1':
@@ -111,7 +126,7 @@ def get_schools(career, region, gender, edu_level):
                 schools += list(queryset)
         else:
             for subject in subjects:
-                queryset = Cseeyear2016Subjectperformance.objects.filter(subjectname = subject).filter(region = region).filter(subjectregranking__in=["1","2","3"])
+                queryset = Cseeyear2017Subjectperformance.objects.filter(subjectname = subject).filter(region = region).filter(subjectregranking__in=["1","2","3"])
                 schools += list(queryset)
     return schools
 
@@ -122,6 +137,6 @@ def alevel_subjects(request):
 
 
 def olevel_subjects(request):
-    subjects = Cseeyear2016Subjectperformance.objects.order_by().values('subjectname').distinct()
+    subjects = Cseeyear2017Subjectperformance.objects.order_by().values('subjectname').distinct()
     pageTitle = "O-levels Subjects"
     return render(request, 'subjects.html', {'subjects': subjects, 'pageTitle': pageTitle})
