@@ -56,11 +56,11 @@ def school(request, schoolcode):
     OlevelPerformanceTrends = [];
 
     if olevel_subjects15:
-        OlevelPerformanceTrends.append({"2015": olevel_subjects15[0].gpa})
+        OlevelPerformanceTrends.append({"2015": (olevel_subjects15[0].gpa).encode("utf8")})
     if olevel_subjects16:
-        OlevelPerformanceTrends.append({"2016": olevel_subjects16[0].gpa})
+        OlevelPerformanceTrends.append({"2016": (olevel_subjects16[0].gpa).encode("utf8")})
     if alevel_subjects16:
-        AlevelPerformanceTrends.append({"2016": alevel_subjects16[0].gpa})
+        AlevelPerformanceTrends.append({"2016": (alevel_subjects16[0].gpa).encode("utf8")})
 
     if olevel_subjects:
         school_name = olevel_subjects[0].schoolname
@@ -68,7 +68,7 @@ def school(request, schoolcode):
         school_gpa = olevel_subjects[0].gpa
         OlevelOverallPerformance = Cseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
         OlevelOverallPerformance = serializers.serialize("json", OlevelOverallPerformance)
-        OlevelPerformanceTrends.append({"2017": olevel_subjects[0].gpa})
+        OlevelPerformanceTrends.append({"2017": (olevel_subjects[0].gpa).encode("utf8")})
 
     if alevel_subjects:
         school_name = alevel_subjects[0].schoolname
@@ -76,7 +76,7 @@ def school(request, schoolcode):
         school_gpa = alevel_subjects[0].gpa
         AlevelOverallPerformance = Acseeyear2017Overallperformance.objects.filter(schoolcode = schoolcode).filter(gender = 'T')
         AlevelOverallPerformance = serializers.serialize("json", AlevelOverallPerformance)
-        AlevelPerformanceTrends.append({"2017": alevel_subjects[0].gpa})
+        AlevelPerformanceTrends.append({"2017": (alevel_subjects[0].gpa).encode("utf8")})
 
     SchoolPerformance = Cseeyear2017.objects.filter(schoolcode = schoolcode)
     ASchoolPerformance = Acseeyear2017.objects.filter(schoolcode = schoolcode)
@@ -104,7 +104,7 @@ def school(request, schoolcode):
         AlevelSchooldetailsList.append(subjectdetail)
 
     return render (request, 'school.html', {'OlevelSchooldetailsList': OlevelSchooldetailsList, 'AlevelSchooldetailsList': AlevelSchooldetailsList, 'alevel_subjects': alevel_subjects, 'pageTitle': pageTitle,
-'school_name': school_name, 'school_region': school_region, 'school_gpa': school_gpa, 'OlevelOverallPerformance': OlevelOverallPerformance, 'AlevelOverallPerformance': AlevelOverallPerformance})
+'school_name': school_name, 'school_region': school_region, 'school_gpa': school_gpa, 'OlevelOverallPerformance': OlevelOverallPerformance, 'AlevelOverallPerformance': AlevelOverallPerformance, 'AlevelPerformanceTrends': AlevelPerformanceTrends, 'OlevelPerformanceTrends': OlevelPerformanceTrends})
 
 
 def get_schools(career, region, gender, edu_level):
